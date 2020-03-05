@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatelessWidget {
@@ -29,11 +29,16 @@ class _LoginFormState extends State<LoginForm> {
   int _seconds = 0;
   Timer _timer;
 
+  String username = '';
+  String vrCode = '';
+
   // 开启定时器，防止重复点击倒计时
-  _getVRCode () {
-    if(_seconds == 0) {
+  _getVRCode () async {
+    if(_seconds == 0 && username != '') {
       // 倒计时
       _startTimer();
+      Response response = await Dio().get("http://www.baidu.com");
+      print(response);
     }
   }
 
@@ -49,7 +54,7 @@ class _LoginFormState extends State<LoginForm> {
 
       setState(() {
         if(_seconds <= 0) {
-          _verifyStr = '获取验证码';
+          _verifyStr = '重新获取';
         } else {
           _verifyStr = '$_seconds s';
         }
@@ -59,6 +64,11 @@ class _LoginFormState extends State<LoginForm> {
   // 取消定时器
   _cancelTimer () {
     _timer.cancel();
+  }
+
+  // 登录
+  _login () {
+    
   }
 
   @override
@@ -86,7 +96,9 @@ class _LoginFormState extends State<LoginForm> {
                   ),
                 ),
                 onChanged: (val) {
-
+                  setState(() {
+                    username = val;
+                  });
                 },
                 onSubmitted: (val) {
 
@@ -113,7 +125,9 @@ class _LoginFormState extends State<LoginForm> {
                           )
                         ),
                         onChanged: (val) {
-
+                          setState(() {
+                            vrCode = val;
+                          });
                         },
                         onSubmitted: (val) {
 
@@ -150,8 +164,8 @@ class _LoginFormState extends State<LoginForm> {
               disabledColor: Colors.blue[200],
               elevation: 0.0,
               child: Text('登录', style: TextStyle(color: Colors.white),),
-              onPressed: () {
-                
+              onPressed: username == '' || vrCode == '' ? null : () {
+                _login();
               },
             ),
           ),
