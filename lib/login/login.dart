@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_toutiao_app/module/request.dart';
 
 class LoginPage extends StatelessWidget {
   @override
@@ -37,8 +37,9 @@ class _LoginFormState extends State<LoginForm> {
     if(_seconds == 0 && username != '') {
       // 倒计时
       _startTimer();
-      Response response = await Dio().get("http://www.baidu.com");
-      print(response);
+      RequestModule.httpRequest('get', '/xxxx').then((val) {
+        print(val);
+      });
     }
   }
 
@@ -68,7 +69,7 @@ class _LoginFormState extends State<LoginForm> {
 
   // 登录
   _login () {
-    
+
   }
 
   @override
