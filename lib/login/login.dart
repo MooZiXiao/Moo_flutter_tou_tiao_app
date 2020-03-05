@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatelessWidget {
@@ -23,6 +25,42 @@ class LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<LoginForm> {
+  String _verifyStr = '获取验证码';
+  int _seconds = 0;
+  Timer _timer;
+
+  // 开启定时器，防止重复点击倒计时
+  _getVRCode () {
+    if(_seconds == 0) {
+      // 倒计时
+      _startTimer();
+    }
+  }
+
+  // 倒计时
+  _startTimer () {
+    _seconds = 60;
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if(_seconds <= 0) {
+        _cancelTimer();
+        return;
+      }
+      _seconds --;
+
+      setState(() {
+        if(_seconds <= 0) {
+          _verifyStr = '获取验证码';
+        } else {
+          _verifyStr = '$_seconds s';
+        }
+      });
+    });
+  }
+  // 取消定时器
+  _cancelTimer () {
+    _timer.cancel();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -83,15 +121,20 @@ class _LoginFormState extends State<LoginForm> {
                       )
                     ,
                   ),
-                  Container(
-                    width: 108.0,
-                    height: 30.0,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: Color.fromRGBO(237, 237, 237, 1),
-                      borderRadius: BorderRadius.circular(120.0)
+                  GestureDetector(
+                    onTap: () {
+                      _getVRCode();
+                    },
+                    child: Container(
+                      width: 108.0,
+                      height: 30.0,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Color.fromRGBO(237, 237, 237, 1),
+                        borderRadius: BorderRadius.circular(120.0)
+                      ),
+                      child: Text(_verifyStr),
                     ),
-                    child: Text('获取验证码'),
                   )
                 ],
               ),
