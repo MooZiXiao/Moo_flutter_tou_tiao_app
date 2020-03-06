@@ -45,8 +45,8 @@ class _NewsPageState extends State<NewsPage> {
           ),
         ),
         body: TabBarView(
-          children: channels.map((val) => 
-            TabBarContent()
+          children: channels.map((val) =>
+            TabBarContent(val['id'])
           ).toList()
         ),
       ),
