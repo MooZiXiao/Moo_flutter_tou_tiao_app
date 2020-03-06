@@ -120,6 +120,9 @@ class _LoginFormState extends State<LoginForm> {
         );
 
         await prefs.setString('token', val.data['data']['token']);
+
+        // 跳转 禁止路由返回
+        Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
       // } else {
       //   Scaffold.of(context).showSnackBar(
       //     SnackBar(content: Text(val.data['message']),)

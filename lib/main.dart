@@ -18,7 +18,12 @@ class App extends StatelessWidget {
     return MaterialApp(
       title: 'MOO 头条',
       home: token != null ? HomePage() : LoginPage(),
+      // home: HomePage(),
       debugShowCheckedModeBanner: false,
+      routes: {
+        '/home': (context) => HomePage(),
+        '/login': (context) => LoginPage()
+      },
     );
   }
 }
