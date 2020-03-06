@@ -25,7 +25,6 @@ class _NewsPageState extends State<NewsPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _getChannels();
   }

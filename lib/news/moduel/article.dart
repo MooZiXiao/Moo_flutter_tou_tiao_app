@@ -6,6 +6,7 @@ class Article {
   String autName;
   int commCount;
   int isTop;
+  String pubdate;
   int imgType;
   List images;
 
@@ -16,6 +17,7 @@ class Article {
     autName = json['aut_name'];
     commCount = json['comm_count'];
     isTop = json['is_top'];
+    pubdate = json['pubdate'];
     imgType = json['cover']['type'];
     images = json['cover']['images'];
   }

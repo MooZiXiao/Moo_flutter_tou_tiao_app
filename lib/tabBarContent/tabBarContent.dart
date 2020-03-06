@@ -1,10 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_toutiao_app/module/request.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_toutiao_app/news/moduel/article.dart';
-
+import 'package:timeago/timeago.dart' as timeago;
 class TabBarContent extends StatefulWidget {
   final int id;
 
@@ -17,8 +15,9 @@ class TabBarContent extends StatefulWidget {
 class _TabBarContentState extends State<TabBarContent> {
 
   List<Article> _list = [];
+  ScrollController _controller = ScrollController();
 
-  _getData () async {
+  _getData ([type]) async {
     Response response = await dio.get("http://ttapi.research.itcast.cn/app/v1_1/articles", queryParameters: {"channel_id": widget.id, "timestamp": "1583484886724", "with_top": 0});
 
     // var data = await RequestModule.httpRequest('get', '/user/articles', null);
@@ -26,30 +25,58 @@ class _TabBarContentState extends State<TabBarContent> {
 
     // 数据序列化实例化
     List jsonList = response.data['data']['results'];
-    List jsonData = jsonList.map((e) => Article.fromJson(e)).toList();
+    List<Article> jsonData = jsonList.map((e) => Article.fromJson(e)).toList();
     // print(jsonData); 
-    setState(() {
-      _list = jsonData;
-    });
+    if (type == 1) {
+      setState(() {
+        _list.addAll(jsonData);
+      });
+    } else {
+      setState(() {
+        _list = jsonData;
+      });
+    }
   }  
 
   @override
   void initState() {
-    // TODO: implement initState
     // print('/articles/${widget.id}');
     super.initState();
     _getData();
+
+    // 上拉加载更多 监听
+    _controller.addListener(() {
+      var maxScroll = _controller.position.maxScrollExtent;
+      // 手动拉
+      var pixels = _controller.position.pixels;
+      if(maxScroll == pixels) {
+        // 新的接口，由于没有所以做以下修改
+        _getData(1);
+      }
+    });
   }
+
+  // 下拉刷新
+  Future _refresh () async {
+    // 接口
+    _getData();
+  }
+
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(12.0),
-      child: ListView.builder(
-        itemCount: _list.length,
-        itemBuilder: (context, index) {
-          return NewsItem(_list[index]);
-        },
+    return RefreshIndicator(
+      onRefresh: _refresh,
+      child: Padding(
+        padding: EdgeInsets.all(12.0),
+        child: ListView.builder(
+          itemCount: _list.length,
+          itemBuilder: (context, index) {
+            return NewsItem(_list[index]);
+          },
+          // 上拉加载更多
+          controller: _controller,
+        )
       )
     );
   }
@@ -76,6 +103,8 @@ class NewsItem extends StatelessWidget {
                   fontSize: 18.0,
                   color: Colors.black
                 ),
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             SizedBox(
@@ -93,6 +122,8 @@ class NewsItem extends StatelessWidget {
             fontSize: 18.0,
             color: Colors.black
           ),
+          maxLines: 3,
+          overflow: TextOverflow.ellipsis,
         ),
         SizedBox(
           height: 5.0,
@@ -131,7 +162,7 @@ class NewsItem extends StatelessWidget {
                 ),
               ),
               TextSpan(
-                text: '1小时前',
+                text: timeago.format(DateTime.parse(article.pubdate)),
                 style: TextStyle(
                   color: Colors.grey
                 ),
