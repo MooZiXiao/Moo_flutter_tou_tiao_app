@@ -24,4 +24,11 @@ class RequestModule {
       print(err);
     }
   }
+
+  // 校验用户是否有token
+  static checkUserToken () async {
+    SharedPreferences refs = await SharedPreferences.getInstance();
+    return refs.getString('token');
+  }
 }
+

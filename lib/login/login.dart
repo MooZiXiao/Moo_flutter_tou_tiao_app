@@ -63,6 +63,7 @@ class _LoginFormState extends State<LoginForm> {
     _controller.dispose();
     _controller2.dispose();
     super.dispose();
+    _cancelTimer();
   }
   
 
@@ -85,7 +86,7 @@ class _LoginFormState extends State<LoginForm> {
 
   // 倒计时
   _startTimer () {
-    _seconds = 10;
+    _seconds = 60;
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if(_seconds <= 0) {
         _cancelTimer();
