@@ -4,6 +4,7 @@ import 'package:flutter_toutiao_app/login/login.dart';
 import 'package:flutter_toutiao_app/module/request.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   RequestModule.checkUserToken().then((val) {
     runApp(App(val));
   });
@@ -17,8 +18,8 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'MOO 头条',
-      home: token != null ? HomePage() : LoginPage(),
-      // home: HomePage(),
+      // home: token != null ? LoginPage() : HomePage(),
+      home: HomePage(),
       debugShowCheckedModeBanner: false,
       routes: {
         '/home': (context) => HomePage(),
