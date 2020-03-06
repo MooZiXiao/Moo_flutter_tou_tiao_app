@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_toutiao_app/module/request.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatelessWidget {
   @override
@@ -29,23 +30,62 @@ class _LoginFormState extends State<LoginForm> {
   int _seconds = 0;
   Timer _timer;
 
-  String username = '';
-  String vrCode = '';
+  String username = '13061616161';
+  String vrCode = '246810';
+
+  // 初始值
+  final _controller = TextEditingController();
+  final _controller2 = TextEditingController();
+
+  void initState() {
+    _controller.addListener(() {
+      final text = username;
+      _controller.value = _controller.value.copyWith(
+        text: text,
+        selection:
+            TextSelection(baseOffset: text.length, extentOffset: text.length),
+        composing: TextRange.empty,
+      );
+    });
+    _controller2.addListener(() {
+      final text = vrCode;
+      _controller2.value = _controller2.value.copyWith(
+        text: text,
+        selection:
+            TextSelection(baseOffset: text.length, extentOffset: text.length),
+        composing: TextRange.empty,
+      );
+    });
+    super.initState();
+  }
+
+  void dispose() {
+    _controller.dispose();
+    _controller2.dispose();
+    super.dispose();
+  }
+  
 
   // 开启定时器，防止重复点击倒计时
   _getVRCode () async {
     if(_seconds == 0 && username != '') {
       // 倒计时
       _startTimer();
-      RequestModule.httpRequest('get', '/xxxx').then((val) {
-        print(val);
+      setState(() {
+        vrCode = '246810';
       });
+      Scaffold.of(context).showSnackBar(
+        SnackBar(content: Text('验证码已发送，请注意查收。'), duration: Duration(seconds: 2),)
+      );
+      // RequestModule.httpRequest('get', '/sms/codes/?mobile=$username', null).then((val) {
+      //   print(val);
+      // });
     }
   }
 
   // 倒计时
   _startTimer () {
-    _seconds = 60;
+    _seconds = 10;
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       if(_seconds <= 0) {
         _cancelTimer();
@@ -69,7 +109,22 @@ class _LoginFormState extends State<LoginForm> {
 
   // 登录
   _login () {
+    RequestModule.httpRequest('post', '/authorizations', {'mobile': username, 'code': vrCode}).then((val) async {
+      // print(val.data['data']['token']);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      // if(val.data['code'] == 1) {
+        
+        Scaffold.of(context).showSnackBar(
+          SnackBar(content: Text('登录成功'),)
+        );
 
+        await prefs.setString('token', val.data['data']['token']);
+      // } else {
+      //   Scaffold.of(context).showSnackBar(
+      //     SnackBar(content: Text(val.data['message']),)
+      //   );
+      // }
+    });
   }
 
   @override
@@ -80,7 +135,8 @@ class _LoginFormState extends State<LoginForm> {
             color: Colors.white,
             padding: EdgeInsets.symmetric(horizontal: 20.0),
             child: 
-              TextField(
+              TextFormField(
+                controller: _controller,
                 keyboardType: TextInputType.phone,
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.mobile_screen_share, color: Colors.grey,),
@@ -101,9 +157,9 @@ class _LoginFormState extends State<LoginForm> {
                     username = val;
                   });
                 },
-                onSubmitted: (val) {
+                // onSubmitted: (val) {
 
-                },
+                // },
               ),
           ),
           Container(
@@ -114,7 +170,9 @@ class _LoginFormState extends State<LoginForm> {
                 children: <Widget>[
                   Expanded(
                     child: 
-                      TextField(
+                      TextFormField(
+                        keyboardType: TextInputType.visiblePassword,
+                        controller: _controller2,
                         decoration: InputDecoration(
                           prefixIcon: Icon(Icons.lock, color: Colors.grey,),
                           hintText: '请输入验证码',
@@ -123,16 +181,15 @@ class _LoginFormState extends State<LoginForm> {
                           ),
                           enabledBorder: UnderlineInputBorder(
                             borderSide: BorderSide.none
-                          )
+                          ),
                         ),
                         onChanged: (val) {
                           setState(() {
                             vrCode = val;
                           });
                         },
-                        onSubmitted: (val) {
-
-                        },
+                        // onSubmitted: (val) {
+                        // },
                       )
                     ,
                   ),
