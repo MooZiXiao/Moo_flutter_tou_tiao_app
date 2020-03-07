@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_toutiao_app/detail/shareSheet.dart';
+import 'package:flutter_toutiao_app/module/request.dart';
+import 'package:timeago/timeago.dart' as timeago;
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 
 class DetailPage extends StatefulWidget {
   final int id;
@@ -11,13 +14,45 @@ class DetailPage extends StatefulWidget {
 }
 
 class _DetailPageState extends State<DetailPage> {
+
+  var detail;
+  List recomments;
+  bool _isFollow;
+
+  _getDetail () async {
+    // print(widget.id);
+    var data = await RequestModule.httpRequest('get', '/articles/${widget.id}', null);
+    print(data.data['data']);
+    setState(() {
+      detail = data.data['data'];
+      recomments = detail['recomments'];
+      _isFollow = detail['is_followed'];
+    });
+  }
+
+  _followed () {
+    print(_isFollow);
+    // var data = await RequestModule.httpRequest('get', '/articles/${widget.id}', null);
+    setState(() {
+      _isFollow = !_isFollow;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getDetail();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
+      body: detail == null ? Center(
+        child: CircularProgressIndicator(),
+      ) : CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
-            title: Text('MMMMMMMMMMMMMMM'),
+            title: Text(detail['title']),
             actions: <Widget>[
               IconButton(
                 icon: Icon(Icons.more_horiz),
@@ -38,7 +73,7 @@ class _DetailPageState extends State<DetailPage> {
               Padding(
                 padding: EdgeInsets.all(10.0),
                 child: Text(
-                  'MMMMMMMMMMMMMMM',
+                  detail['title'],
                   style: TextStyle(
                     fontSize: 22.0,
                     fontWeight: FontWeight.w600
@@ -71,13 +106,13 @@ class _DetailPageState extends State<DetailPage> {
 
                                 },
                                 child: CircleAvatar(
-                                  backgroundImage: NetworkImage('https://n.sinaimg.cn/blog/267/w180h87/20200306/772d-iqmtvwv2621956.jpg'),
+                                  backgroundImage: NetworkImage(detail['aut_photo']),
                                 ),
                               ),
                             ),
                             SizedBox(width: 10.0,),
                             Text(
-                              'MooZioo',
+                              detail['aut_name'],
                               style: TextStyle(
                                 color: Colors.black
                               ),
@@ -86,11 +121,11 @@ class _DetailPageState extends State<DetailPage> {
                         ),
                         RaisedButton.icon(
                           onPressed: () {
-
+                            _followed();
                           },
-                          icon: Icon(Icons.add, color: Colors.white,),
+                          icon: _isFollow == false ? Icon(Icons.add, color: Colors.white,) : Icon(Icons.timelapse, color: Colors.white,),
                           label: Text(
-                            '关注',
+                            _isFollow == false ? '关注' : '已关注',
                             style: TextStyle(
                               color: Colors.white
                             ),
@@ -104,7 +139,13 @@ class _DetailPageState extends State<DetailPage> {
                     IconButton(
                       icon: Icon(Icons.more_horiz, color: Colors.grey,),
                       onPressed: () {
-
+                        // 弹出底部
+                        showModalBottomSheet(
+                          context: context, 
+                          builder: (BuildContext context) {
+                            return ShareSheet();
+                          }
+                        );
                       },
                     )
                   ],
@@ -131,7 +172,7 @@ class _DetailPageState extends State<DetailPage> {
 
                               },
                               child: CircleAvatar(
-                                backgroundImage: NetworkImage('https://n.sinaimg.cn/blog/267/w180h87/20200306/772d-iqmtvwv2621956.jpg'),
+                                backgroundImage: NetworkImage(detail['aut_photo']),
                               ),
                             ),
                           ),
@@ -139,13 +180,13 @@ class _DetailPageState extends State<DetailPage> {
                           Column(
                             children: <Widget>[
                               Text(
-                                'MooZioo',
+                                detail['aut_name'],
                                 style: TextStyle(
                                   color: Colors.black
                                 ),
                               ),
                               Text(
-                                '1小时前',
+                                timeago.format(DateTime.parse(detail['pubdate'])),
                                 style: TextStyle(
                                   color: Colors.grey,
                                   fontSize: 14.0
@@ -157,11 +198,11 @@ class _DetailPageState extends State<DetailPage> {
                       ),
                       RaisedButton.icon(
                         onPressed: () {
-
+                          _followed();
                         },
-                        icon: Icon(Icons.add, color: Colors.white,),
+                        icon: _isFollow == false ? Icon(Icons.add, color: Colors.white,) : Icon(Icons.timelapse, color: Colors.white,),
                         label: Text(
-                          '关注',
+                          _isFollow == false ? '关注' : '已关注',
                           style: TextStyle(
                             color: Colors.white
                           ),
@@ -179,12 +220,13 @@ class _DetailPageState extends State<DetailPage> {
             delegate: SliverChildListDelegate([
               Padding(
                 padding: EdgeInsets.all(10.0),
-                child: Text(
-                  '''在3月6日的座谈会上，习近平说，这是党的十八大以来脱贫攻坚方面最大规模的会议。《时政新闻眼》查询发现，五年前的11月份，中国也曾高规格开过一次中央扶贫开发工作会议，那是党的十八届五中全会后的第一个中央工作会议。会议期间，中西部22个省区市党政主要负责同志向中央签署脱贫攻坚责任书《时政新闻眼》发现，这五位发言者所在的区域颇具代表性。云南怒江、新疆和田均在全国深度贫困地区“三州三区”之列。习近平对主要聚居在云南怒江州贡山县独龙江乡的独龙族群众脱贫一直牵挂于心。2014年4月考察新疆时，他曾召集和田等南疆5个地州负责同志开座谈会。2017年3月，兰考成为贫困退出机制建立后河南全省首个脱贫的贫困县。赫章、大化则分别是贵州16个深度贫困县之一和广西4个极度贫困县之一，尚未脱贫人口分别是2.5万人和1.7万余人。时政新闻眼》发现，这五位发言者所在的区域颇具代表性。云南怒江、新疆和田均在全国深度贫困地区“三州三区”之列。习近平对主要聚居在云南怒江州贡山县独龙江乡的独龙族群众脱贫一直牵挂于心。2014年4月考察新疆时，他曾召集和田等南疆5个地州负责同志开座谈会。2017年3月，兰考成为贫困退出机制建立后河南全省首个脱贫的贫困县。赫章、大化则分别是贵州16个深度贫困县之一和广西4个极度贫困县之一，尚未脱贫人口分别是2.5万人和1.7万余人。''',
-                  style: TextStyle(
-                    fontSize: 16.0,
+                child: HtmlWidget(
+                  detail['content'],
+                  textStyle: TextStyle(
+                    color: Colors.black,
+                    fontSize: 17.0,
                   ),
-                ),
+                )
               ),
               // 猜你喜欢
               Padding(
@@ -200,46 +242,62 @@ class _DetailPageState extends State<DetailPage> {
                       ),
                     ),
                     Wrap(
-                      children: <Widget>[
-                        Container(
-                          margin: EdgeInsets.only(top: 10.0),
-                          width: MediaQuery.of(context).size.width / 2 - 20,
-                          child: Text(
-                            '主要负责同志向中央向中央',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
+                      children: recomments.map((val) {
+                        return GestureDetector(
+                          onTap: () {
+
+                          },
+                          child: Container(
+                            margin: EdgeInsets.only(top: 10.0),
+                            width: MediaQuery.of(context).size.width / 2 - 20,
+                            child: Text(
+                              val['title'],
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          )
+                        );
+                      }).toList(),
+                  //     <Widget>[
+                  //       Container(
+                  //         margin: EdgeInsets.only(top: 10.0),
+                  //         width: MediaQuery.of(context).size.width / 2 - 20,
+                  //         child: Text(
+                  //           '主要负责同志向中央向中央',
+                  //           maxLines: 1,
+                  //           overflow: TextOverflow.ellipsis,
+                  //         ),
+                  //       ),
                         
-                        Container(
-                          margin: EdgeInsets.only(top: 10.0),
-                          width: MediaQuery.of(context).size.width / 2 - 20,
-                          child: Text(
-                            '主要负责同志向中央向中央',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
+                  //       Container(
+                  //         margin: EdgeInsets.only(top: 10.0),
+                  //         width: MediaQuery.of(context).size.width / 2 - 20,
+                  //         child: Text(
+                  //           '主要负责同志向中央向中央',
+                  //           maxLines: 1,
+                  //           overflow: TextOverflow.ellipsis,
+                  //         ),
+                  //       ),
                         
-                        Container(
-                          margin: EdgeInsets.only(top: 10.0),
-                          width: MediaQuery.of(context).size.width / 2 - 20,
-                          child: Text(
-                            '主要负责同志向中央向中央',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        Container(
-                          margin: EdgeInsets.only(top: 10.0),
-                          width: MediaQuery.of(context).size.width / 2 - 20,
-                          child: Text(
-                            '主要负责同志向中央向中央',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ],
+                  //       Container(
+                  //         margin: EdgeInsets.only(top: 10.0),
+                  //         width: MediaQuery.of(context).size.width / 2 - 20,
+                  //         child: Text(
+                  //           '主要负责同志向中央向中央',
+                  //           maxLines: 1,
+                  //           overflow: TextOverflow.ellipsis,
+                  //         ),
+                  //       ),
+                  //       Container(
+                  //         margin: EdgeInsets.only(top: 10.0),
+                  //         width: MediaQuery.of(context).size.width / 2 - 20,
+                  //         child: Text(
+                  //           '主要负责同志向中央向中央',
+                  //           maxLines: 1,
+                  //           overflow: TextOverflow.ellipsis,
+                  //         ),
+                  //       ),
+                  //     ],
                     )
                   ],
                 ),
@@ -319,9 +377,9 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate{
   _SliverAppBarDelegate({this.child, this.childBar});
   // 高 最小/最大
   @override
-  double get minExtent => 80.0;
+  double get minExtent => 88.0;
   @override
-  double get maxExtent => 80.0;
+  double get maxExtent => 88.0;
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
