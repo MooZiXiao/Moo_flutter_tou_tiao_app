@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_toutiao_app/detail/detail.dart';
 import 'package:flutter_toutiao_app/module/request.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_toutiao_app/news/moduel/article.dart';
@@ -72,7 +73,14 @@ class _TabBarContentState extends State<TabBarContent> {
         child: ListView.builder(
           itemCount: _list.length,
           itemBuilder: (context, index) {
-            return NewsItem(_list[index]);
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => DetailPage(_list[index].artId),
+                ));
+              },
+              child: NewsItem(_list[index]),
+            );
           },
           // 上拉加载更多
           controller: _controller,

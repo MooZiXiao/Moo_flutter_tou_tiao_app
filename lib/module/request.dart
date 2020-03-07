@@ -6,6 +6,7 @@ Dio dio = new Dio();
 
 
 class RequestModule {
+  // 可选[data]
   static httpRequest (method, url, data) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     dio.options.headers['Authorization'] = 'Bearer ' + prefs.getString('token') ?? '';
