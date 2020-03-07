@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_toutiao_app/detail/shareSheet.dart';
 
 class DetailPage extends StatefulWidget {
   final int id;
@@ -21,7 +22,13 @@ class _DetailPageState extends State<DetailPage> {
               IconButton(
                 icon: Icon(Icons.more_horiz),
                 onPressed: () {
-
+                  // 弹出底部
+                  showModalBottomSheet(
+                    context: context, 
+                    builder: (BuildContext context) {
+                      return ShareSheet();
+                    }
+                  );
                 },
               )
             ],
