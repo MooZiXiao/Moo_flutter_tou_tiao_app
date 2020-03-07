@@ -18,8 +18,8 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'MOO 头条',
-      // home: token != null ? LoginPage() : HomePage(),
-      home: HomePage(),
+      home: token != null ? LoginPage() : HomePage(),
+      // home: HomePage(),
       debugShowCheckedModeBanner: false,
       routes: {
         '/home': (context) => HomePage(),

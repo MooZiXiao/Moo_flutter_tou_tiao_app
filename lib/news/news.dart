@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_toutiao_app/module/request.dart';
+import 'package:flutter_toutiao_app/news/drawerList/drawerList.dart';
 import 'package:flutter_toutiao_app/searchBox/searchBox.dart';
 import 'package:flutter_toutiao_app/tabBar/tabBar.dart';
 import 'package:flutter_toutiao_app/tabBarContent/tabBarContent.dart';
@@ -15,6 +16,7 @@ class _NewsPageState extends State<NewsPage> {
 
   // 获取 tab数据
   _getChannels () async {
+    // print('关闭后刷新');
     var data = await RequestModule.httpRequest('get', '/user/channels', null);
     // print(data.data['data']['channels']);
     setState(() {
@@ -48,6 +50,7 @@ class _NewsPageState extends State<NewsPage> {
             TabBarContent(val['id'])
           ).toList()
         ),
+        drawer: DrawerList(_getChannels),
       ),
     );
   }

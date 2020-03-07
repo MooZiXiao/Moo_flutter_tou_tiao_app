@@ -18,7 +18,7 @@ class _TabBarContentState extends State<TabBarContent> {
   ScrollController _controller = ScrollController();
 
   _getData ([type]) async {
-    Response response = await dio.get("http://ttapi.research.itcast.cn/app/v1_1/articles", queryParameters: {"channel_id": widget.id, "timestamp": "1583484886724", "with_top": 0});
+    Response response = await Dio().get("http://ttapi.research.itcast.cn/app/v1_1/articles", queryParameters: {"channel_id": widget.id, "timestamp": "1583484886724", "with_top": 0});
 
     // var data = await RequestModule.httpRequest('get', '/user/articles', null);
     // print(response.data['data']['results']);

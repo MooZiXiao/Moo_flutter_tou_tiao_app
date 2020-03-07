@@ -8,7 +8,7 @@ Dio dio = new Dio();
 class RequestModule {
   static httpRequest (method, url, data) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    dio.options.headers['Authorization'] = prefs.getString('token') ?? '';
+    dio.options.headers['Authorization'] = 'Bearer ' + prefs.getString('token') ?? '';
     try {
       Response response;
       switch (method) {
@@ -17,6 +17,9 @@ class RequestModule {
         break;
         case 'post':
           response = await Dio().post(Config.baseUrl + url, data:data);  
+        break;
+        case 'put':
+          response = await Dio().put(Config.baseUrl + url, data:data);  
         break;
       }
       return response;
