@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_toutiao_app/detail/comment.dart';
 import 'package:flutter_toutiao_app/detail/shareSheet.dart';
 import 'package:flutter_toutiao_app/module/request.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -359,11 +360,12 @@ class _DetailPageState extends State<DetailPage> {
                     ),
                   )
                 ],
-              )
+              ),
 
+              //
+              Comment()
             ]),
           ),
-          
         ],
       ),
     );
