@@ -21,6 +21,9 @@ class UserList extends StatelessWidget {
         ),
         Divider(),
         ListTile(
+          onTap: () {
+            Navigator.pushNamed(context, '/chat');
+          },
           title: Text('Moo同学'),
           trailing: Icon(Icons.chevron_right),
         ),

@@ -7,15 +7,9 @@ class UserBtn extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: 15.0),
         child: Row(
         children: <Widget>[
-          Expanded(
-            child: PubBtn(Icons.star_border, '收藏'),
-          ),
-          Expanded(
-            child: PubBtn(Icons.access_time, '历史'),
-          ),
-          Expanded(
-            child: PubBtn(Icons.loyalty, '作品'),
-          ),
+          PubBtn(Icons.star_border, '收藏'),
+          PubBtn(Icons.access_time, '历史'),
+          PubBtn(Icons.loyalty, '作品'),
         ],
       )
     );

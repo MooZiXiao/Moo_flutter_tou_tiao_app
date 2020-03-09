@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_toutiao_app/chat/chat.dart';
 import 'package:flutter_toutiao_app/home/home.dart';
 import 'package:flutter_toutiao_app/login/login.dart';
 import 'package:flutter_toutiao_app/module/request.dart';
@@ -23,7 +24,8 @@ class App extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       routes: {
         '/home': (context) => HomePage(),
-        '/login': (context) => LoginPage()
+        '/login': (context) => LoginPage(),
+        '/chat': (context) => ChatPage(),
       },
     );
   }
